@@ -1,6 +1,16 @@
 const http = require('http')
 const fs = require('fs')
 
+const PPG = "PointsPerGame"
+const RPG = "ReboundsPerGame"
+const APG = "AssistsPerGame"
+const TOPG = "TurnOversPerGame"
+const SPG = "StealsPerGame"
+const BPG = "BlocksPerGame"
+const FGP = "FieldGoalPercentage"
+const FTP = "FreeThrowPercentage"
+const TPMPG = "ThreePointsMadePerGame"
+
 function Utility() {
   this.players = require("./players.json")
   this.stats = {
@@ -12,14 +22,20 @@ function Utility() {
 Utility.prototype.grabPlayers = function() {
   let playerList = this.players.league.standard
   let playerStats = []
+  let firstPlayer = playerList[playerList.length - 1];
+  console.log(firstPlayer.firstName)
 
-  for (let i = 0; i < this.players.league.standard.length; i++) {
-    let player = playerList[i]
-    // console.log(i + ": " + player.firstName + " " + player.lastName + "\n")
-    this.grabPlayerStats(player.personId).then((json)=>{
-      console.log(json)
-    })
-  }
+  // for (let i = 0; i < this.players.league.standard.length; i++) {
+  //   let player = playerList[i]
+  //   // console.log(i + ": " + player.firstName + " " + player.lastName + "\n")
+  //   this.grabPlayerStats(player.personId).then((json)=>{
+  //     console.log(json)
+  //   }).catch(() => {
+  //
+  //   })
+  // }
+
+  this.grabPlayerStats(firstPlayer.personId).then(json => console.log(json))
 }
 
 Utility.prototype.grabPlayerStats = function(personId) {
@@ -33,8 +49,11 @@ Utility.prototype.grabPlayerStats = function(personId) {
       })
 
       resp.on('end', () => {
-        // .league.standard.stats.regularSeason.season[0].total
-        let json = JSON.parse(data)
+        let json = {}
+        let statArray = JSON.parse(data).league.standard.stats.regularSeason.season[0].teams
+
+
+
         resolve(json)
       })
     }).on("error", (err) => {
